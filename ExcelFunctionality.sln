@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelFunctionality", "ExcelFunctionality\ExcelFunctionality.csproj", "{90FB1A32-7AFD-447D-A45A-7920DCDBDFFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PruebasExcelFunctions", "PruebasExcelFunctions\PruebasExcelFunctions.csproj", "{C05B6C5F-B5EA-432A-883A-1A91B41634BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{90FB1A32-7AFD-447D-A45A-7920DCDBDFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90FB1A32-7AFD-447D-A45A-7920DCDBDFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90FB1A32-7AFD-447D-A45A-7920DCDBDFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05B6C5F-B5EA-432A-883A-1A91B41634BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05B6C5F-B5EA-432A-883A-1A91B41634BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05B6C5F-B5EA-432A-883A-1A91B41634BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05B6C5F-B5EA-432A-883A-1A91B41634BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
