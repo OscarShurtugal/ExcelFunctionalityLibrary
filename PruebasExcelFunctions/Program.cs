@@ -13,11 +13,13 @@ namespace PruebasExcelFunctions
         static void Main(string[] args)
         {
 
-            string pathToExcel = @"C:\Users\oscarsanchez2\Documents\Automation Anywhere Files\Automation Anywhere\My Tasks\ATT_PRODUCTIVO\093202_MigracionPrepagoaPostpago\Input\BAU 24.xlsx";
+            string pathToExcel = @"C:\Users\oscarsanchez2\Documents\Prueba de Limpieza Excel\Book1.xlsx";
 
-            string excelSheet = getExcelActiveSheetName(pathToExcel);
+            //string excelSheet = getExcelActiveSheetName(pathToExcel);
 
             string deleteTrashCells = EraseExcelCells(pathToExcel);
+
+            
 
             Console.WriteLine(deleteTrashCells);
 
@@ -65,16 +67,17 @@ namespace PruebasExcelFunctions
             int columnCount = worksheet.UsedRange.Columns.Count;
 
             Console.WriteLine("Ultima Columna (letra):"+ColumnNumberToName(columnCount+1));
+            Console.WriteLine("Ultima Columna (letra):"+ColumnNumberToName(lastUsedColumn+1));
 
             string lastColumnAvailable = "XFD1048576";
 
             Microsoft.Office.Interop.Excel.Range horizontalEmptyRange = worksheet.Range[ColumnNumberToName(lastUsedColumn + 1) + "1", lastColumnAvailable];
-            Microsoft.Office.Interop.Excel.Range verticalEmptyRange = worksheet.Range["A"+lastUsedRow+1, lastColumnAvailable];
+            Microsoft.Office.Interop.Excel.Range verticalEmptyRange = worksheet.Range["A" + lastUsedRow + 1, lastColumnAvailable];
 
-            horizontalEmptyRange.Delete();
-            verticalEmptyRange.Delete();
-
-
+            horizontalEmptyRange.Delete(XlDeleteShiftDirection.xlShiftUp);
+            verticalEmptyRange.Delete(XlDeleteShiftDirection.xlShiftUp);
+         
+            
             Console.WriteLine("Total de filas: "+rowCount);
             Console.WriteLine("Total de Columnas: "+columnCount);
 
@@ -95,6 +98,8 @@ namespace PruebasExcelFunctions
             string resultado = "fin";
             return resultado;
         }
+
+        
 
         // Return the column name for this column number.
         public static string ColumnNumberToName(int col_num)
