@@ -19,7 +19,7 @@ namespace ExcelFunctionality
         /// </summary>
         /// <param name="pathToExcelFile"></param>
         /// <returns>String with the name of the Active Sheet</returns>
-        public string GetExcelActiveSheetName(string pathToExcelFile)
+        public string getExcelActiveSheetName(string pathToExcelFile)
         {
 
 
