@@ -8,7 +8,6 @@ using Microsoft.Office.Interop.Excel;
 using System.IO;
 using System.Data;
 using System.Globalization;
-using ExcelDataReader;
 using System.Reflection;
 
 namespace PruebasExcelFunctions
@@ -18,11 +17,24 @@ namespace PruebasExcelFunctions
         static void Main(string[] args)
         {
 
-            string pathToExcel = @"C:\Users\oscarsanchez2\Documents\Prueba de Limpieza Excel\BAU_29_Ago_robot.xlsx";
+            string pathToExcel = @"C:\Users\oscarsanchez2\Desktop\Input.xlsx";
 
-            //string excelSheet = getExcelActiveSheetName(pathToExcel);
 
-            //string deleteTrashCells = EraseExcelCells(pathToExcel);
+
+
+            Console.WriteLine("Columnas: " + GetTotalAmountOfColumns(pathToExcel));
+            Console.WriteLine("Filas: " + GetTotalAmountOfRows(pathToExcel));
+
+            Console.WriteLine("Columna a letra: " + ColumnNumberToName(GetTotalAmountOfColumns(pathToExcel)));
+
+
+            Console.ReadLine();
+
+        }
+
+
+        public static int GetTotalAmountOfRows(string pathToExcel)
+        {
             //Se crea una instancia de una aplicación de Excel
             Microsoft.Office.Interop.Excel.Application myExcel = new Microsoft.Office.Interop.Excel.Application();
             //False para que no abra la aplicación, sino que lo haga "por atrás"
@@ -32,64 +44,23 @@ namespace PruebasExcelFunctions
             //Después uso una instancia de Worksheet (clase de Interop) para obtener la Hoja actual del archivo Excel
             Worksheet worksheet = myExcel.ActiveSheet;
             //En ese worksheet, en la propiedad de Name, tenemos el nombre de la hoja actual, que mando en el query 1 como parámetro
-            Console.WriteLine("WorkSheet.Name: " + worksheet.Name);
+            //Console.WriteLine("WorkSheet.Name: " + worksheet.Name);
 
-            string hojaExcel = worksheet.Name;
 
             bool exceptionDetected = false;
             int initialRow = 1;
             int totalRows = 0;
-            Microsoft.Office.Interop.Excel.Worksheet sheet = workbook.Sheets[worksheet.Name] as Microsoft.Office.Interop.Excel.Worksheet;
-            Microsoft.Office.Interop.Excel.Range range = sheet.get_Range("A1", Missing.Value);
-
-
-
 
             while (!exceptionDetected)
             {
                 try
                 {
-                    if (worksheet.Cells[initialRow,1].Value2 != null)
+                    if (worksheet.Cells[initialRow, 1].Value2 != null)
                     {
                         //initialRow++;
                         totalRows++;
                         initialRow++;
-                        Console.WriteLine(worksheet.Cells[initialRow,1].Value2 + " " + initialRow);
-                    }
-                    else
-                    {
-
-                        break;
-                    }
-                }
-                catch(Exception e)
-                {
-                    exceptionDetected = true;
-                }
-
-            }
-
-            Console.WriteLine("Filas detectadas: " + totalRows);
-
-
-
-            bool errorDetected = false;
-            int initialColumn = 1;
-            int totalColumns = 0;
-          
-
-
-
-            while (!exceptionDetected)
-            {
-                try
-                {
-                    if (worksheet.Cells[1, initialColumn].Value2 != null)
-                    {
-                        //initialRow++;
-                        totalColumns++;
-                        initialColumn++;
-                        Console.WriteLine(worksheet.Cells[1, initialColumn].Value2 + " " + initialRow);
+                        //Console.WriteLine(worksheet.Cells[initialRow, 1].Value2 + " " + initialRow);
                     }
                     else
                     {
@@ -104,132 +75,94 @@ namespace PruebasExcelFunctions
 
             }
 
-            Console.WriteLine("columnas detectadas: " + totalColumns);
 
 
             //Al finalizar tu proceso debes cerrar tu workbook
 
             workbook.Close();
+            myExcel.Quit();
 
             //Con esto de Marshal se libera de manera completa el objeto desde Interop Services, si no haces esto
             //El objeto sigue en memoria, no lo libera C#
             Marshal.FinalReleaseComObject(worksheet);
             Marshal.FinalReleaseComObject(workbook);
             Marshal.FinalReleaseComObject(myExcel);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
 
-
-
-
-            //GetTotalAmountOfRows(pathToExcel);
-
-            //GetTotalAmountOfColumns(pathToExcel);
-
-
-
-
-            //Console.WriteLine(" Filas detectadas con datos: " +GetTotalAmountOfRows(pathToExcel) + " Columnas detectadas con datos: " + GetTotalAmountOfColumns(pathToExcel));
-
-
-            //Console.WriteLine(deleteTrashCells);
-
-            Console.ReadLine();
+            return totalRows;
 
         }
 
-        //private static int GetTotalAmountOfColumns(string pathToExcel)
-        //{
-        //    int countColumns = 0;
-        //    int actualIndexColumn = 0;
-        //    bool errorDetected = false;
-
-        //    try
-        //    {
-        //        using (var stream = File.Open(pathToExcel, FileMode.Open, FileAccess.Read))
-        //        {
-        //            using (var reader = ExcelReaderFactory.CreateReader(stream))
-        //            {
-        //                do
-        //                {
-        //                    while (reader.Read() && !errorDetected)
-        //                    {
-        //                        while (!errorDetected)
-        //                        {
-        //                            try
-        //                            {
-        //                                Console.WriteLine(reader.GetString(actualIndexColumn));
-        //                                if (reader.GetString(actualIndexColumn) != null)
-        //                                {
-        //                                    countColumns++;
-        //                                    actualIndexColumn++;
-        //                                }
-        //                                else
-        //                                {
-        //                                    break;
-        //                                }
-        //                            }
-        //                            catch (Exception e)
-        //                            {
-        //                                errorDetected = true;
-        //                            }
-
-        //                        }
-        //                        break;
-
-        //                    }
-        //                } while (reader.NextResult() && !errorDetected);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        //Console.WriteLine("Error: " + e.Message);
-        //    }
+        public static int GetTotalAmountOfColumns(string pathToExcel)
+        {
 
 
-        //    //Console.WriteLine("Fin");
-        //    //Console.WriteLine("Columnas detectadas con datos: " + countColumns);
-        //    return countColumns;
-        //}
+            //Se crea una instancia de una aplicación de Excel
+            Microsoft.Office.Interop.Excel.Application myExcel = new Microsoft.Office.Interop.Excel.Application();
+            //False para que no abra la aplicación, sino que lo haga "por atrás"
+            myExcel.Visible = false;
+            //Aquí usando la instancia de Aplicación de excel, abro el libro mandando como parámetro la ruta a mi archivo
+            Microsoft.Office.Interop.Excel.Workbook workbook = myExcel.Workbooks.Open(pathToExcel);
+            //Después uso una instancia de Worksheet (clase de Interop) para obtener la Hoja actual del archivo Excel
+            Worksheet worksheet = myExcel.ActiveSheet;
+            //En ese worksheet, en la propiedad de Name, tenemos el nombre de la hoja actual, que mando en el query 1 como parámetro
+            //Console.WriteLine("WorkSheet.Name: " + worksheet.Name);
 
-        //private static int GetTotalAmountOfRows(string pathToExcel)
-        //{
-        //    int countRows = 0;
-        //    try
-        //    {
-        //        using (var stream = File.Open(pathToExcel, FileMode.Open, FileAccess.Read))
-        //        {
-        //            using (var reader = ExcelReaderFactory.CreateReader(stream))
-        //            {
-        //                do
-        //                {
-        //                    while (reader.Read())
-        //                    {
-        //                        Console.WriteLine(reader.GetString(0));
-        //                        if (reader.GetString(0) != null)
-        //                        {
-        //                            countRows++;
-        //                        }
-        //                        else
-        //                        {
-        //                            break;
-        //                        }
-        //                    }
-        //                } while (reader.NextResult());
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine("Error: " + e.Message);
-        //    }
+            string hojaExcel = worksheet.Name;
 
 
-        //    //Console.WriteLine("Fin");
-        //    //Console.WriteLine("Filas detectadas con datos: " + countRows);
 
-        //    return countRows;
-        //}
+            bool errorDetected = false;
+            int initialColumn = 1;
+            int totalColumns = 0;
+
+
+
+
+            while (!errorDetected)
+            {
+                try
+                {
+                    if (worksheet.Cells[1, initialColumn].Value2 != null)
+                    {
+                        //initialRow++;
+                        totalColumns++;
+                        initialColumn++;
+                        //Console.WriteLine(worksheet.Cells[1, initialColumn].Value2 + " " + initialColumn);
+                    }
+                    else
+                    {
+
+                        break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    errorDetected = true;
+                }
+
+            }
+
+
+
+            //Al finalizar tu proceso debes cerrar tu workbook
+
+            workbook.Close();
+            myExcel.Quit();
+
+            //Con esto de Marshal se libera de manera completa el objeto desde Interop Services, si no haces esto
+            //El objeto sigue en memoria, no lo libera C#
+            Marshal.FinalReleaseComObject(worksheet);
+            Marshal.FinalReleaseComObject(workbook);
+            Marshal.FinalReleaseComObject(myExcel);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            return totalColumns;
+        }
+
 
         public static string EraseExcelCells(string pathToExcelFile)
         {
@@ -265,13 +198,13 @@ namespace PruebasExcelFunctions
                                            Microsoft.Office.Interop.Excel.XlSearchOrder.xlByColumns, Microsoft.Office.Interop.Excel.XlSearchDirection.xlPrevious,
                                            false, System.Reflection.Missing.Value, System.Reflection.Missing.Value).Column;
 
-            Console.WriteLine("Last used Row: " +lastUsedRow);
-            Console.WriteLine("Last used Column: " +lastUsedColumn);
+            Console.WriteLine("Last used Row: " + lastUsedRow);
+            Console.WriteLine("Last used Column: " + lastUsedColumn);
 
             int columnCount = worksheet.UsedRange.Columns.Count;
 
-            Console.WriteLine("Ultima Columna (letra):"+ColumnNumberToName(columnCount+1));
-            Console.WriteLine("Ultima Columna (letra):"+ColumnNumberToName(lastUsedColumn+1));
+            Console.WriteLine("Ultima Columna (letra):" + ColumnNumberToName(columnCount + 1));
+            Console.WriteLine("Ultima Columna (letra):" + ColumnNumberToName(lastUsedColumn + 1));
 
             string lastColumnAvailable = "XFD1048576";
 
@@ -280,10 +213,10 @@ namespace PruebasExcelFunctions
 
             horizontalEmptyRange.Delete(XlDeleteShiftDirection.xlShiftUp);
             verticalEmptyRange.Delete(XlDeleteShiftDirection.xlShiftUp);
-         
-            
-            Console.WriteLine("Total de filas: "+rowCount);
-            Console.WriteLine("Total de Columnas: "+columnCount);
+
+
+            Console.WriteLine("Total de filas: " + rowCount);
+            Console.WriteLine("Total de Columnas: " + columnCount);
 
             Console.WriteLine("Fila fin: " + endRow);
 
@@ -303,7 +236,7 @@ namespace PruebasExcelFunctions
             return resultado;
         }
 
-        
+
 
         // Return the column name for this column number.
         public static string ColumnNumberToName(int col_num)
@@ -358,7 +291,7 @@ namespace PruebasExcelFunctions
         }
     }
 
-    
+
 
 }
 
