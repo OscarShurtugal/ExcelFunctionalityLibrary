@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Office.Interop.Excel;
+
 
 namespace ExcelFunctionality
 {
@@ -13,7 +15,10 @@ namespace ExcelFunctionality
     /// </summary>
     public class ExcelEasyFunctionality
     {
-        
+
+
+
+
         /// <summary>
         /// This method returns the name of the active sheet in the excel Document provided
         /// </summary>
@@ -51,12 +56,10 @@ namespace ExcelFunctionality
 
 
         /// <summary>
-        /// This method clears the Invisible trash in an Excel file provided
-        /// By trash we mean: you write in an excel cell, delete the content of the cell... but the excel
-        /// holds some kind of trash that can only be erased by DELETING the cell, that's the purpose of this function
+        /// This method deletes the Invisible trash from a given excel File
         /// </summary>
         /// <param name="pathToExcelFile"></param>
-        /// <returns>String with Confirmation Message: "Invisible Trash Removed"</returns>
+        /// <returns>String with confirmation Text</returns>
         public string EraseExcelInvisibleTrash(string pathToExcelFile)
         {
         

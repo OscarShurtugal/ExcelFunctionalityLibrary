@@ -5,6 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Excel;
+using System.IO;
+using System.Data;
+using System.Globalization;
+using ExcelDataReader;
+using System.Reflection;
 
 namespace PruebasExcelFunctions
 {
@@ -13,19 +18,218 @@ namespace PruebasExcelFunctions
         static void Main(string[] args)
         {
 
-            string pathToExcel = @"C:\Users\oscarsanchez2\Documents\Prueba de Limpieza Excel\Book1.xlsx";
+            string pathToExcel = @"C:\Users\oscarsanchez2\Documents\Prueba de Limpieza Excel\BAU_29_Ago_robot.xlsx";
 
             //string excelSheet = getExcelActiveSheetName(pathToExcel);
 
-            string deleteTrashCells = EraseExcelCells(pathToExcel);
+            //string deleteTrashCells = EraseExcelCells(pathToExcel);
+            //Se crea una instancia de una aplicación de Excel
+            Microsoft.Office.Interop.Excel.Application myExcel = new Microsoft.Office.Interop.Excel.Application();
+            //False para que no abra la aplicación, sino que lo haga "por atrás"
+            myExcel.Visible = false;
+            //Aquí usando la instancia de Aplicación de excel, abro el libro mandando como parámetro la ruta a mi archivo
+            Microsoft.Office.Interop.Excel.Workbook workbook = myExcel.Workbooks.Open(pathToExcel);
+            //Después uso una instancia de Worksheet (clase de Interop) para obtener la Hoja actual del archivo Excel
+            Worksheet worksheet = myExcel.ActiveSheet;
+            //En ese worksheet, en la propiedad de Name, tenemos el nombre de la hoja actual, que mando en el query 1 como parámetro
+            Console.WriteLine("WorkSheet.Name: " + worksheet.Name);
 
-            
+            string hojaExcel = worksheet.Name;
 
-            Console.WriteLine(deleteTrashCells);
+            bool exceptionDetected = false;
+            int initialRow = 1;
+            int totalRows = 0;
+            Microsoft.Office.Interop.Excel.Worksheet sheet = workbook.Sheets[worksheet.Name] as Microsoft.Office.Interop.Excel.Worksheet;
+            Microsoft.Office.Interop.Excel.Range range = sheet.get_Range("A1", Missing.Value);
+
+
+
+
+            while (!exceptionDetected)
+            {
+                try
+                {
+                    if (worksheet.Cells[initialRow,1].Value2 != null)
+                    {
+                        //initialRow++;
+                        totalRows++;
+                        initialRow++;
+                        Console.WriteLine(worksheet.Cells[initialRow,1].Value2 + " " + initialRow);
+                    }
+                    else
+                    {
+
+                        break;
+                    }
+                }
+                catch(Exception e)
+                {
+                    exceptionDetected = true;
+                }
+
+            }
+
+            Console.WriteLine("Filas detectadas: " + totalRows);
+
+
+
+            bool errorDetected = false;
+            int initialColumn = 1;
+            int totalColumns = 0;
+          
+
+
+
+            while (!exceptionDetected)
+            {
+                try
+                {
+                    if (worksheet.Cells[1, initialColumn].Value2 != null)
+                    {
+                        //initialRow++;
+                        totalColumns++;
+                        initialColumn++;
+                        Console.WriteLine(worksheet.Cells[1, initialColumn].Value2 + " " + initialRow);
+                    }
+                    else
+                    {
+
+                        break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    exceptionDetected = true;
+                }
+
+            }
+
+            Console.WriteLine("columnas detectadas: " + totalColumns);
+
+
+            //Al finalizar tu proceso debes cerrar tu workbook
+
+            workbook.Close();
+
+            //Con esto de Marshal se libera de manera completa el objeto desde Interop Services, si no haces esto
+            //El objeto sigue en memoria, no lo libera C#
+            Marshal.FinalReleaseComObject(worksheet);
+            Marshal.FinalReleaseComObject(workbook);
+            Marshal.FinalReleaseComObject(myExcel);
+
+
+
+
+
+            //GetTotalAmountOfRows(pathToExcel);
+
+            //GetTotalAmountOfColumns(pathToExcel);
+
+
+
+
+            //Console.WriteLine(" Filas detectadas con datos: " +GetTotalAmountOfRows(pathToExcel) + " Columnas detectadas con datos: " + GetTotalAmountOfColumns(pathToExcel));
+
+
+            //Console.WriteLine(deleteTrashCells);
 
             Console.ReadLine();
 
         }
+
+        //private static int GetTotalAmountOfColumns(string pathToExcel)
+        //{
+        //    int countColumns = 0;
+        //    int actualIndexColumn = 0;
+        //    bool errorDetected = false;
+
+        //    try
+        //    {
+        //        using (var stream = File.Open(pathToExcel, FileMode.Open, FileAccess.Read))
+        //        {
+        //            using (var reader = ExcelReaderFactory.CreateReader(stream))
+        //            {
+        //                do
+        //                {
+        //                    while (reader.Read() && !errorDetected)
+        //                    {
+        //                        while (!errorDetected)
+        //                        {
+        //                            try
+        //                            {
+        //                                Console.WriteLine(reader.GetString(actualIndexColumn));
+        //                                if (reader.GetString(actualIndexColumn) != null)
+        //                                {
+        //                                    countColumns++;
+        //                                    actualIndexColumn++;
+        //                                }
+        //                                else
+        //                                {
+        //                                    break;
+        //                                }
+        //                            }
+        //                            catch (Exception e)
+        //                            {
+        //                                errorDetected = true;
+        //                            }
+
+        //                        }
+        //                        break;
+
+        //                    }
+        //                } while (reader.NextResult() && !errorDetected);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        //Console.WriteLine("Error: " + e.Message);
+        //    }
+
+
+        //    //Console.WriteLine("Fin");
+        //    //Console.WriteLine("Columnas detectadas con datos: " + countColumns);
+        //    return countColumns;
+        //}
+
+        //private static int GetTotalAmountOfRows(string pathToExcel)
+        //{
+        //    int countRows = 0;
+        //    try
+        //    {
+        //        using (var stream = File.Open(pathToExcel, FileMode.Open, FileAccess.Read))
+        //        {
+        //            using (var reader = ExcelReaderFactory.CreateReader(stream))
+        //            {
+        //                do
+        //                {
+        //                    while (reader.Read())
+        //                    {
+        //                        Console.WriteLine(reader.GetString(0));
+        //                        if (reader.GetString(0) != null)
+        //                        {
+        //                            countRows++;
+        //                        }
+        //                        else
+        //                        {
+        //                            break;
+        //                        }
+        //                    }
+        //                } while (reader.NextResult());
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("Error: " + e.Message);
+        //    }
+
+
+        //    //Console.WriteLine("Fin");
+        //    //Console.WriteLine("Filas detectadas con datos: " + countRows);
+
+        //    return countRows;
+        //}
 
         public static string EraseExcelCells(string pathToExcelFile)
         {
@@ -153,4 +357,12 @@ namespace PruebasExcelFunctions
 
         }
     }
+
+    
+
 }
+
+
+
+
+
