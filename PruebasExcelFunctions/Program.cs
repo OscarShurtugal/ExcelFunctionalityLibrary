@@ -9,6 +9,7 @@ using System.IO;
 using System.Data;
 using System.Globalization;
 using System.Reflection;
+using System.Threading;
 
 namespace PruebasExcelFunctions
 {
@@ -19,18 +20,66 @@ namespace PruebasExcelFunctions
 
             string pathToExcel = @"C:\Users\oscarsanchez2\Desktop\Input.xlsx";
 
+            Microsoft.Office.Interop.Excel.Application myExcel = new Application();
 
 
 
-            Console.WriteLine("Columnas: " + GetTotalAmountOfColumns(pathToExcel));
-            Console.WriteLine("Filas: " + GetTotalAmountOfRows(pathToExcel));
+            //Console.WriteLine("Columnas: " + GetTotalAmountOfColumns(pathToExcel));
+            //Console.WriteLine("Filas: " + GetTotalAmountOfRows(pathToExcel));
 
-            Console.WriteLine("Columna a letra: " + ColumnNumberToName(GetTotalAmountOfColumns(pathToExcel)));
+            //Console.WriteLine("Columna a letra: " + ColumnNumberToName(GetTotalAmountOfColumns(pathToExcel)));
 
+
+            //Console.WriteLine(myExcel.LanguageSettings.get_LanguageID(Microsoft.Office.Core.MsoAppLanguageID.msoLanguageIDUI));
+            //Codigos de lenguaje:
+            //1033: en-us
+            //2058: es-mx
+
+            Console.WriteLine(getExcelSheetNames(pathToExcel));
 
             Console.ReadLine();
 
         }
+
+        public static string getExcelSheetNames(string pathToExcelFile)
+        {
+
+
+            //I create an instance of a Microsoft Excel Application
+            Microsoft.Office.Interop.Excel.Application myExcel = new Microsoft.Office.Interop.Excel.Application();
+            //Set visible to false to let the app work "behind".. a.k.a not OPEN the excel application
+            myExcel.Visible = false;
+            //Using the excel application instance, I open the book with the path to my excel file as parameter
+            Microsoft.Office.Interop.Excel.Workbook workbook = myExcel.Workbooks.Open(pathToExcelFile);
+            //Later I use a Worksheet Instance to get the actual sheet in the Excel File
+            Worksheet worksheet = myExcel.ActiveSheet;
+            
+            //This string will hold all the sheet's names
+            string excelSheet = "";
+
+            //In this loop I concatenate the worksheet names into the string
+            foreach (Worksheet hoja in myExcel.Worksheets)
+            {
+                excelSheet += hoja.Name.ToString();
+                //This is the separator I chose to delimitate the sheet names
+                excelSheet += "¬";
+            }
+
+            //We close our workbook at the end of our process
+            workbook.Close();
+
+            //As a sideNote, Excel InteropServices don't release the object in memory, there's an instance of Excel still running
+            //We use Marchal Final Release to release the object and close the Excel Process
+            Marshal.FinalReleaseComObject(worksheet);
+            Marshal.FinalReleaseComObject(workbook);
+            Marshal.FinalReleaseComObject(myExcel);
+
+
+            return excelSheet;
+
+
+        }
+
 
 
         public static int GetTotalAmountOfRows(string pathToExcel)
@@ -289,6 +338,8 @@ namespace PruebasExcelFunctions
             return excelSheet;
 
         }
+
+
     }
 
 
